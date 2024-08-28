@@ -1,6 +1,5 @@
 package discordstudy.calender.domain.schedule.entity;
 
-import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.team.entity.Team;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
