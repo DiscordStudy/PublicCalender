@@ -1,0 +1,9 @@
+version: "3"
+services:
+  my-sql:
+    container_name: discord-calender
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOCAL_DB_PASSWORD}
+    ports:
+      - 3306:3306
