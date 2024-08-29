@@ -19,10 +19,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request)
+    public ResponseEntity<Void> signup(@RequestBody SignupRequest request)
     {
         Member savedMember=memberService.registermember(request);
-        SignupResponse response=new SignupResponse(savedMember.getLoginId(),savedMember.getNickname());
-        return ResponseEntity.ok(response);
+        SignupResponse response=new SignupResponse(savedMember);
+        return ResponseEntity.ok().build();
     }
 }

@@ -15,10 +15,8 @@ public class MemberService {
     public Member registermember(SignupRequest request)
 
     {
-        Member member=new Member();
-        member.setLoginId(request.getLoginId());
-        member.setNickname(request.getNickname());
-        member.setPassword(request.getPassword());
+//
+        Member member=new Member(request.getLoginId(), request.getNickname(), request.getNickname());
         return memberRepository.save(member);
     }
 
