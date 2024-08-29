@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/calender
     username: root
-    password: ${LOCAL_DB_PASSWORD}
+    password: skhuA+4.5
   jpa:
     show-sql: true
     hibernate:

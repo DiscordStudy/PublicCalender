@@ -1,5 +1,7 @@
 package discordstudy.calender.domain.member.controller;
 
+import discordstudy.calender.domain.member.dto.SignupRequest;
+import discordstudy.calender.domain.member.dto.SignupResponse;
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +19,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Member> signup(@RequestBody Member member )
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request)
     {
-        Member savedmember = memberService.registermember(member);
-        return ResponseEntity.ok(savedmember);
-        //responseEntity의 body에 savedmember넣기
+        Member savedMember=memberService.registermember(request);
+        SignupResponse response=new SignupResponse(savedMember.getLoginId(),savedMember.getNickname());
+        return ResponseEntity.ok(response);
     }
 }
