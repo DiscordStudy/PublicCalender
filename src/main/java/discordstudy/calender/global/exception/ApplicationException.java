@@ -13,12 +13,16 @@ public class ApplicationException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
-    private ApplicationException(ErrorCode errorCode) {
+    /**
+     * 예외를 던질 때 사용<pre>
+     * {@code
+     * public Object throwException(){
+     *   throw new ApplicationException(ErrorCode);
+     *  }
+     * }</pre>
+     */
+    public ApplicationException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
-    }
-
-    public ApplicationException of(ErrorCode errorCode) {
-        return new ApplicationException(errorCode);
     }
 }
