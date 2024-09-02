@@ -5,8 +5,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Map;
 
 /**
  * 공통 응답을 위한 객체
@@ -68,6 +71,51 @@ public class ApiResponse<T> {
                         .message("Success")
                         .build()
         );
+    }
+
+    /**
+     * 클라이언트에게 커스텀 헤더를 추가하여 데이터를 전달 할 때 사용<p>
+     *
+     * @param data  클라이언트에 전달 할 데이터<br>
+     *              메시지 : Success
+     * @param key   헤더의 키
+     * @param value 헤더의 밸류
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> okWithCustomHeader(T data, String key, String value) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(key, value)
+                .body(
+                        ApiResponse.<T>builder()
+                                .status(HttpStatus.OK.value())
+                                .data(data)
+                                .message("Success")
+                                .build()
+                );
+    }
+
+    /**
+     * 클라이언트에게 커스텀 헤더쌍들을 추가하여 데이터를 전달 할 때 사용<p>
+     *
+     * @param data   클라이언트에 전달 할 데이터<br>
+     *               메시지 : Success
+     * @param header Key에 헤더의 key, Value 에 헤더의 value
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> okWithCustomHeaders(T data, Map<String, String> header) {
+        HttpHeaders headers = new HttpHeaders();
+
+        for (Map.Entry<String, String> map : header.entrySet()) {
+            headers.add(map.getKey(), map.getValue());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(
+                        ApiResponse.<T>builder()
+                                .status(HttpStatus.OK.value())
+                                .data(data)
+                                .message("Success")
+                                .build()
+                );
     }
 
     /**
