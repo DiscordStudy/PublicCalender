@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,10 +19,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/","/members/signup","/members/login").permitAll()//
+                        .requestMatchers("/","/members/*").permitAll()//
                         .anyRequest().authenticated()//그외의 모든 요청은 인증요구
                 )
-                .logout((logout) -> logout.permitAll()); // 로그아웃 접근도 모두 허용
+                .logout(LogoutConfigurer::permitAll); // 로그아웃 접근도 모두 허용
 
                 return http.build();
     }
