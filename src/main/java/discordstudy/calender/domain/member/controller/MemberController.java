@@ -35,8 +35,6 @@ public class MemberController {
         {
             return ResponseEntity.ok().build();//로그인 성공시 ok를 보내고 싶음
         }
-        else{
-            return ResponseEntity.status(401).build();//인증 실패시에는 401 권한 오류 설정
-        }
+        return ResponseEntity.status(401).build();
     }
 }
