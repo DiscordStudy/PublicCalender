@@ -18,8 +18,8 @@ public class MemberService {
     public Member registermember(SignupRequest request)
 
     {
-//
-        Member member=new Member(request.getLoginId(), request.getNickname(), request.getNickname());
+        String encodedPassword=passwordEncoder.encode(request.getPassword());
+        Member member=new Member(request.getLoginId(), request.getNickname(), encodedPassword);
         return memberRepository.save(member);
     }
 
