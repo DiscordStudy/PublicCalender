@@ -4,6 +4,8 @@ import discordstudy.calender.domain.member.dto.LoginRequest;
 import discordstudy.calender.domain.member.dto.SignupRequest;
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
+import discordstudy.calender.global.exception.ApplicationException;
+import discordstudy.calender.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class MemberService {
     public boolean authenticate(LoginRequest request)
     {
         Member member = memberRepository.findByLoginId(request.getLoginId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 로그인 아이디 나 패스워드 입니다"));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND));
 
         return passwordEncoder.matches(request.getPassword(), member.getPassword());
         //entity 객체인 member의 password와 요청dto로 들어온 request의 password를 비교해서
