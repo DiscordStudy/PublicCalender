@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
      * DB 예외를 핸들링 하기 위한 메소드<br>
      * 현재 로그를 적재하진 않고 있음 추후 로그를 적재하기 위한 수단을 준비해야 함
      */
-    @ExceptionHandler
+    @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ApiResponse<Void>> dbException(DataAccessException exception) {
         log.error(exception.getMessage(), exception);
         return ApiResponse.errorCustom(
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
      * 프로젝트에서 직접 발생시키지 않은 예외들을 처리하기 위한 메소드<br>
      * 현재 로그를 적재하진 않고 있음 추후 로그를 적재하기 위한 수단을 준비해야 함
      */
-    @ExceptionHandler
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> serverException(RuntimeException exception) {
         log.error(exception.getMessage(), exception);
         return ApiResponse.errorCustom(
