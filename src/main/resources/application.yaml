@@ -9,3 +9,6 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
+jwt:
+  issuer: cmwmss59@gmail.com
+  secret_key: ${JWT_SECRET}
