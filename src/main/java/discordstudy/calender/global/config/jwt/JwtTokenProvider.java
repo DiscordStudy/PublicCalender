@@ -12,10 +12,10 @@ import java.util.List;
 
 @Component
 public class JwtTokenProvider {
-    @Value("${secret_key}")//yaml 파일에 있는 secret key
+    @Value("${jwt.secret_key}")//yaml 파일에 있는 secret key
     private String secretKey;
 
-    @Value("${ExpirationInMs")//yaml 파일에 있는 expire length
+    @Value("${jwt.ExpirationInMs}")//yaml 파일에 있는 expire length
     private long validityInMilliseconds;
 
     //Secret Key를 Base64로 인코딩
