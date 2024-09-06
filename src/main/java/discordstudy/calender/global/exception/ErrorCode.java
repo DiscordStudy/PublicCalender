@@ -23,6 +23,7 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 이메일입니다."),
     PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "아이디 비밀번호가 일치하지 않습니다."),
     DUPLICATED_LOGINID(HttpStatus.CONFLICT,"중복된 로그인 아이디 입니다"),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST,"유효하지 않은 로그인id와 비밀번호입니다"),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
