@@ -17,16 +17,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Member registermember(SignupRequest request)
-
-    {
+    public Member registermember(SignupRequest request) {
         String encodedPassword=passwordEncoder.encode(request.getPassword());
         Member member=new Member(request.getLoginId(), request.getNickname(), encodedPassword);
         return memberRepository.save(member);
     }
 
-    public boolean authenticate(LoginRequest request)
-    {
+    public boolean authenticate(LoginRequest request) {
         Member member = memberRepository.findByLoginId(request.getLoginId())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND));
 
