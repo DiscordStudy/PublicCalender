@@ -1,5 +1,8 @@
 package discordstudy.calender.global.config;
 
+import discordstudy.calender.global.config.jwt.JwtTokenFilter;
+import discordstudy.calender.global.config.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,11 +11,15 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 //Spring Security 에서 보안 설정을 활성화 하기 위해서 사용하는 애노테이션
 public class SecurityConfig {
+    private final JwtTokenProvider jwtTokenProvider;
+
     //시큐리티 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -22,7 +29,9 @@ public class SecurityConfig {
                         .requestMatchers("/", "/members/*").permitAll()//
                         .anyRequest().authenticated()//그외의 모든 요청은 인증요구
                 )
-                .logout(LogoutConfigurer::permitAll); // 로그아웃 접근도 모두 허용
+                .logout(LogoutConfigurer::permitAll) // 로그아웃 접근도 모두 허용
+                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

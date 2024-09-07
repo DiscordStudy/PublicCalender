@@ -7,6 +7,7 @@ import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.service.MemberService;
 import discordstudy.calender.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,20 +22,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody SignupRequest request)
-    {
-        Member savedMember=memberService.registermember(request);
-        SignupResponse response=new SignupResponse(savedMember);
+    public ResponseEntity<Void> signup(@RequestBody SignupRequest request) {
+        Member savedMember = memberService.registermember(request);
+        SignupResponse response = new SignupResponse(savedMember);
         return ResponseEntity.ok().build();
     }
+
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Void>> login(@RequestBody LoginRequest request)
-    {
-        boolean authenticate = memberService.authenticate(request);
-        if(authenticate)//회원가입이 성공한 회원 ! 이라면
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest request) {
+        String token = memberService.authenticate(request);//jwt토큰 생성
+        if (token != null)//회원가입이 성공한 회원 ! 이라면
         {
-            return ResponseEntity.ok().build();//로그인 성공시 ok를 보내고 싶음
+            //return ApiResponse.okWithMessage("로그인 성공",token);
+            return ApiResponse.okWithCustomHeader("로그인 성공", "Authorization", "Bearer" + token);
         }
-        return ResponseEntity.status(401).build();
+        return ApiResponse.errorCustom(HttpStatus.UNAUTHORIZED, "로그인 실패");
     }
 }
