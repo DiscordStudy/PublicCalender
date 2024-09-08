@@ -1,5 +1,6 @@
 package discordstudy.calender.domain.member.entity;
 
+import discordstudy.calender.domain.team.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +28,13 @@ public class Member {
     @Column(name = "password",nullable = true)
     private String password;
 
-    public Member(String loginId, String nickname, String password) {
+    @Enumerated(EnumType.STRING)//Role 문자열로 저장
+    @Column(name="role",nullable = false)
+    private Role role;
+    public Member(String loginId, String nickname, String password,Role role) {
         this.loginId = loginId;
         this.nickname = nickname;
         this.password = password;
+        this.role=role;
     }
 }

@@ -4,9 +4,15 @@ import discordstudy.calender.domain.member.dto.LoginRequest;
 import discordstudy.calender.domain.member.dto.SignupRequest;
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
+import discordstudy.calender.domain.team.enums.Role;
+import discordstudy.calender.global.config.jwt.JwtTokenProvider;
+import discordstudy.calender.global.exception.ApplicationException;
+import discordstudy.calender.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,25 +20,27 @@ public class MemberService {
     //회원가입은 Save를 해야함 !
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public Member registermember(SignupRequest request)
-
-    {
-        String encodedPassword=passwordEncoder.encode(request.getPassword());
-        Member member=new Member(request.getLoginId(), request.getNickname(), encodedPassword);
+    public Member registermember(SignupRequest request) {
+        if (memberRepository.existsByLoginId(request.getLoginId())) {
+            throw new ApplicationException(ErrorCode.DUPLICATED_LOGINID);
+        }
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        Member member = new Member(request.getLoginId(), request.getNickname(), encodedPassword, Role.MEMBER);
         return memberRepository.save(member);
     }
 
-    public boolean authenticate(LoginRequest request)
-    {
+    public String authenticate(LoginRequest request) {
         Member member = memberRepository.findByLoginId(request.getLoginId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 로그인 아이디 나 패스워드 입니다"));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND));
 
-        return passwordEncoder.matches(request.getPassword(), member.getPassword());
-        //entity 객체인 member의 password와 요청dto로 들어온 request의 password를 비교해서
-        //맞으면 true 아니면 false를 가짐
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        return jwtTokenProvider.createToken(member.getLoginId(), List.of(member.getRole().toString()));
     }
-
 
 
 }
