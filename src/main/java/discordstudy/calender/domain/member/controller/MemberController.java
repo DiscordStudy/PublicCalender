@@ -31,11 +31,7 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest request) {
         String token = memberService.authenticate(request);//jwt토큰 생성
-        if (token != null)//회원가입이 성공한 회원 ! 이라면
-        {
-            //return ApiResponse.okWithMessage("로그인 성공",token);
-            return ApiResponse.okWithCustomHeader("로그인 성공", "Authorization", "Bearer" + token);
-        }
-        return ApiResponse.errorCustom(HttpStatus.UNAUTHORIZED, "로그인 실패");
+
+        return ApiResponse.okWithCustomHeader("로그인 성공", "Authorization", "Bearer" + token);
     }
 }
