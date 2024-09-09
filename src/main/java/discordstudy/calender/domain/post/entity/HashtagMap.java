@@ -2,9 +2,11 @@ package discordstudy.calender.domain.post.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class HashtagMap {
 
     @Id
@@ -18,4 +20,8 @@ public class HashtagMap {
     @ManyToOne
     @JoinColumn(name = "hashtagId")
     private Hashtag hashtag;
+
+    public HashtagMap(Hashtag hashtag) {
+        this.hashtag = hashtag;
+    }
 }

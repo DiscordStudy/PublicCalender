@@ -3,14 +3,16 @@ package discordstudy.calender.domain.post.entity;
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -33,6 +35,11 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "memberId")
     private Member member;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private Set<HashtagMap> hashtagMaps = new HashSet<>();
 }
