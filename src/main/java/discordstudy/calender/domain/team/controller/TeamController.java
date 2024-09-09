@@ -1,22 +1,26 @@
 package discordstudy.calender.domain.team.controller;
 
 import discordstudy.calender.domain.team.dto.TeamRequest;
+import discordstudy.calender.domain.team.entity.Team;
+import discordstudy.calender.domain.team.service.TeamService;
 import discordstudy.calender.global.dto.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/team")
+@RequiredArgsConstructor
 public class TeamController {
-    @PostMapping
-    public ResponseEntity<ApiResponse<Integer>> createTeam(@RequestBody TeamRequest request, Authentication authentication) {
-        String username = authentication.getName();
+    private final TeamService teamService;
 
-        return ApiResponse.okWithMessage("success", 1);
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> createTeam(@RequestBody TeamRequest request) {
+        String teamName = request.getTeamName();
+
+        Team team=teamService.createTeam(teamName);
+
+        return ApiResponse.okWithMessage("success",team.getId());
     }
 
 }
