@@ -24,10 +24,9 @@ public class TeamController {
         String teamName = request.getTeamName();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Long teamId = teamService.createTeam(teamName);//Service에서 team을 만들면 teamid만 반환
-        TeamResponse response=new TeamResponse(teamId);
+        TeamResponse response = new TeamResponse(teamId);
         //skype라는 팀을 만들었는데 거기에 사람을 넣어줘야하는 부분 추가 !
-
-        return ApiResponse.okWithMessage("success",response);
+        return ApiResponse.okWithMessage("success", response);
     }
 
 }
