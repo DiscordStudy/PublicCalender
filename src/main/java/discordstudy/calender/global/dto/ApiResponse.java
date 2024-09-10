@@ -81,7 +81,8 @@ public class ApiResponse<T> {
      * @param key   헤더의 키
      * @param value 헤더의 밸류
      */
-    public static <T> ResponseEntity<ApiResponse<T>> okWithCustomHeader(T data, String key, String value) {
+    public static <T> ResponseEntity<ApiResponse<T>>
+    okWithCustomHeader(T data, String key, String value) {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(key, value)
                 .body(

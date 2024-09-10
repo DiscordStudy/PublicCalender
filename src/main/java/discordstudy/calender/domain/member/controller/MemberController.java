@@ -7,7 +7,6 @@ import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.service.MemberService;
 import discordstudy.calender.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,6 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest request) {
         String token = memberService.authenticate(request);//jwt토큰 생성
-
-        return ApiResponse.okWithCustomHeader("로그인 성공", "Authorization", "Bearer" + token);
+        return ApiResponse.okWithCustomHeader("로그인 성공", "Authorization", "Bearer " + token);
     }
 }

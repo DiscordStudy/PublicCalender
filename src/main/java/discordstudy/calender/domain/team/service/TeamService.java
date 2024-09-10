@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 public class TeamService {
     private final TeamRepository teamRepository;
 
-    public Team createTeam(String teamName)
+    public Long createTeam(String teamName)
     {
         Team team=new Team();
         team.setTeamName(teamName);
-        return teamRepository.save(team);
+        teamRepository.save(team);
+        return team.getId();
     }
 
 }
