@@ -53,7 +53,7 @@ public class PostService {
     }
 
     @Transactional
-    public void postDelete(String loginId, Long postId) {
+    public void postDelete(Long postId, String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_EXIST));
 
@@ -65,5 +65,31 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    @Transactional
+    public void postUpdate(PostRequest request, Long postId, String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_EXIST));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_EXIST));
+
+        if (!member.getId().equals(post.getMember().getId())) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        postRepository.save(replacePost(post, request));
+    }
+
+    private Post replacePost(Post post, PostRequest request) {
+        post.setContent(request.content());
+        post.setTitle(request.title());
+
+        Set<HashtagMap> hashtagMaps = handlingHashtag(request.hashtag())
+                .stream().map(HashtagMap::new).collect(Collectors.toSet());
+
+        post.setHashtagMaps(hashtagMaps);
+        return post;
     }
 }

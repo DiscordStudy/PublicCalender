@@ -35,6 +35,7 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @Setter
     @OneToMany(
             mappedBy = "post",
             cascade = CascadeType.ALL,

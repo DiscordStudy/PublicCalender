@@ -28,6 +28,19 @@ public class PostController {
         return ApiResponse.ok();
     }
 
+    @PutMapping("/{postId}")
+    public ResponseEntity<ApiResponse<Void>> postUpdate(
+            @RequestBody PostRequest request,
+            @PathVariable Long postId,
+            Authentication authentication
+    ) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        postService.postUpdate(request, postId, userDetails.getUsername());
+
+        return ApiResponse.ok();
+    }
+
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> postDelete(
             @PathVariable Long postId,
@@ -35,7 +48,7 @@ public class PostController {
     ) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        postService.postDelete(userDetails.getUsername(), postId);
+        postService.postDelete(postId, userDetails.getUsername());
 
         return ApiResponse.ok();
     }
