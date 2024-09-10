@@ -5,9 +5,11 @@ import discordstudy.calender.domain.member.repository.MemberRepository;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Hashtag;
 import discordstudy.calender.domain.post.entity.HashtagMap;
+import discordstudy.calender.domain.post.entity.Post;
 import discordstudy.calender.domain.post.repository.HashtagRepository;
 import discordstudy.calender.domain.post.repository.PostRepository;
 import discordstudy.calender.domain.post.util.PostConverter;
+import discordstudy.calender.domain.team.enums.Role;
 import discordstudy.calender.global.exception.ApplicationException;
 import discordstudy.calender.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +50,20 @@ public class PostService {
                 .forEach(existTags::add);
 
         return existTags;
+    }
+
+    @Transactional
+    public void postDelete(String loginId, Long postId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_EXIST));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_EXIST));
+
+        if (!member.getId().equals(post.getMember().getId()) || !(member.getRole() == Role.ADMIN)) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        postRepository.delete(post);
     }
 }

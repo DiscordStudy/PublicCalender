@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +24,18 @@ public class PostController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         postService.postPost(request, userDetails.getUsername());
+
+        return ApiResponse.ok();
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse<Void>> postDelete(
+            @PathVariable Long postId,
+            Authentication authentication
+    ) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        postService.postDelete(userDetails.getUsername(), postId);
 
         return ApiResponse.ok();
     }
