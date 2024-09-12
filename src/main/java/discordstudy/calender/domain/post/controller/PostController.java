@@ -1,6 +1,7 @@
 package discordstudy.calender.domain.post.controller;
 
 import discordstudy.calender.domain.post.dto.PostRequest;
+import discordstudy.calender.domain.post.dto.PostResponse;
 import discordstudy.calender.domain.post.service.PostService;
 import discordstudy.calender.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +18,17 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> postPost(
+    public ResponseEntity<ApiResponse<PostResponse>> postPost(
             @RequestBody PostRequest request,
             Authentication authentication
     ) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        postService.postPost(request, userDetails.getUsername());
-
-        return ApiResponse.ok();
+        return ApiResponse.ok(
+                new PostResponse(
+                        postService.postPost(request, userDetails.getUsername())
+                )
+        );
     }
 
     @PutMapping("/{postId}")

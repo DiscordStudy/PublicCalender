@@ -29,27 +29,33 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void postPost(PostRequest request, String loginId) {
+    public Long postPost(PostRequest request, String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_EXIST));
 
-        List<Hashtag> hashtags = handlingHashtag(request.hashtag());
+        Set<HashtagMap> hashtagMaps = handlingHashtag(request.hashtag());
 
-        Set<HashtagMap> hashtagMaps = hashtags.stream().map(HashtagMap::new).collect(Collectors.toSet());
-
-        postRepository.save(PostConverter.createPost(request, member, hashtagMaps));
+        return postRepository.save(PostConverter.createPost(request, member, hashtagMaps)).getId();
     }
 
-    private List<Hashtag> handlingHashtag(Set<String> hashtag) {
-        List<Hashtag> existTags = hashtagRepository.findByTagIn(hashtag);
+    private Set<HashtagMap> handlingHashtag(Set<String> hashtags) {
+        List<Hashtag> existingTags = hashtagRepository.findByTagIn(hashtags);
+        Set<String> existingTagNames = existingTags.stream()
+                .map(Hashtag::getTag)
+                .collect(Collectors.toSet());
 
-        hashtagRepository.saveAll(
-                        hashtag.stream().filter(tag -> !existTags.contains(tag))
-                                .map(Hashtag::new).toList()
-                )
-                .forEach(existTags::add);
+        List<Hashtag> newTags = hashtags.stream()
+                .filter(tag -> !existingTagNames.contains(tag))
+                .map(Hashtag::new)
+                .collect(Collectors.toList());
 
-        return existTags;
+        if (!newTags.isEmpty()) {
+            hashtagRepository.saveAll(newTags);
+            existingTags.addAll(newTags);
+        }
+
+        return existingTags.stream()
+                .map(HashtagMap::new).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -60,7 +66,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_EXIST));
 
-        if (!member.getId().equals(post.getMember().getId()) || !(member.getRole() == Role.ADMIN)) {
+        if (!(member.getId().equals(post.getMember().getId()) || member.getRole() == Role.ADMIN)) {
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
@@ -86,10 +92,10 @@ public class PostService {
         post.setContent(request.content());
         post.setTitle(request.title());
 
-        Set<HashtagMap> hashtagMaps = handlingHashtag(request.hashtag())
-                .stream().map(HashtagMap::new).collect(Collectors.toSet());
+        Set<HashtagMap> hashtagMaps = handlingHashtag(request.hashtag());
+        post.getHashtagMaps().clear();
+        post.getHashtagMaps().addAll(hashtagMaps);
 
-        post.setHashtagMaps(hashtagMaps);
         return post;
     }
 }

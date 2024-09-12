@@ -16,11 +16,11 @@ public class Hashtag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", length = 20)
+    @Column(name = "content", length = 20, unique = true)
     private String tag;
 
     @OneToMany(
-            mappedBy = "post",
+            mappedBy = "hashtag",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY
