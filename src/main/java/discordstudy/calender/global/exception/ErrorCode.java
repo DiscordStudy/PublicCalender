@@ -25,6 +25,9 @@ public enum ErrorCode {
     DUPLICATED_LOGINID(HttpStatus.CONFLICT,"중복된 로그인 아이디 입니다"),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST,"유효하지 않은 로그인id와 비밀번호입니다"),
 
+    // POST
+    POST_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
