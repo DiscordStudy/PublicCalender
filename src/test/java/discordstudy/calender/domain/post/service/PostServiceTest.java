@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @DisplayName("PostService 클래스의 ")
@@ -75,7 +75,7 @@ class PostServiceTest {
             "게시글",
             "내용",
             authorMember,
-            null
+            new HashSet<>()
     );
 
     @BeforeEach
@@ -140,8 +140,9 @@ class PostServiceTest {
             postService.postDelete(post.getId(), authorMember.getLoginId());
 
             //Then
-            //기대하는 메소드가 times 만큼 실행되었는지 확인하는 코드
-            verify(postRepository, times(1)).delete(post);
+            //기대하는 메소드가 원하는 만큼 실행되었는지 확인하는 코드
+            // 기본값 times(1)
+            verify(postRepository).delete(post);
         }
 
         @DisplayName("관리자가 삭제에 성공한다")
@@ -157,7 +158,7 @@ class PostServiceTest {
             postService.postDelete(post.getId(), "admin");
 
             //Then
-            verify(postRepository, times(1)).delete(post);
+            verify(postRepository).delete(post);
         }
 
         @DisplayName("유저가 존재하지 않아 실패한다")
@@ -214,7 +215,89 @@ class PostServiceTest {
     @DisplayName("postUpdate() 메소드는")
     class PostUpdateTest {
 
+        PostRequest editedRequest = new PostRequest(
+                "제목변경됨",
+                "내용변경됨",
+                Set.of("해시택")
+        );
+
+        @DisplayName("성공한다")
+        @Test
+        void successTest() {
+            //Given
+            given(memberRepository.findByLoginId(anyString()))
+                    .willReturn(Optional.of(authorMember));
+
+            given(postRepository.findById(anyLong()))
+                    .willReturn(Optional.of(post));
+
+            //중간 객체의 검증을 위한 메소드
+            ArgumentCaptor<Post> capturedPost = ArgumentCaptor.forClass(Post.class);
+
+            //When
+            postService.postUpdate(editedRequest, post.getId(), authorMember.getLoginId());
+
+            //Then
+            verify(postRepository).save(capturedPost.capture());
+
+            Post replacedPost = capturedPost.getValue();
+            assertThat(replacedPost.getTitle()).isEqualTo(editedRequest.title());
+            assertThat(replacedPost.getContent()).isEqualTo(editedRequest.content());
+        }
+
+        @DisplayName("유저가 존재하지 않아 실패한다")
+        @Test
+        void failAboutNotExistMember() {
+            //Given
+            given(memberRepository.findByLoginId(ArgumentMatchers.anyString()))
+                    .willReturn(Optional.empty());
+
+            //When
+            ApplicationException result = assertThrows(ApplicationException.class,
+                    () -> postService.postUpdate(editedRequest, post.getId(), "notExistId"));
+
+            //Then
+            assertThat(result.getErrorCode()).isEqualTo(USER_NOT_EXIST);
+        }
+
+        @DisplayName("게시글이 존재하지 않아 실패한다")
+        @Test
+        void failAboutNotExistPost() {
+            //Given
+            given(memberRepository.findByLoginId(anyString()))
+                    .willReturn(Optional.of(authorMember));
+
+            given(postRepository.findById(anyLong()))
+                    .willReturn(Optional.empty());
+
+            //When
+            ApplicationException result = assertThrows(ApplicationException.class,
+                    () -> postService.postUpdate(editedRequest, post.getId(), authorMember.getLoginId()));
+
+            //Then
+            assertThat(result.getErrorCode()).isEqualTo(POST_NOT_EXIST);
+        }
+
+        @DisplayName("작성자가 달라 수정에 실패한다")
+        @Test
+        void failByDifferentAuthor() {
+            //Given
+            given(memberRepository.findByLoginId(anyString()))
+                    .willReturn(Optional.of(otherMember));
+
+            given(postRepository.findById(anyLong()))
+                    .willReturn(Optional.of(post));
+            //Then & When
+            ApplicationException result = assertThrows(ApplicationException.class,
+                    () -> postService.postUpdate(editedRequest, post.getId(), otherMember.getLoginId()));
+
+            assertThat(result.getErrorCode()).isEqualTo(UNAUTHORIZED_ACCESS);
+        }
     }
+
+    /* TODO
+        replacePost, handlingHashtag 에 대한 테스트 코드 필요
+     */
 }
 
 
