@@ -2,7 +2,6 @@ package discordstudy.calender.domain.post.service;
 
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
-import discordstudy.calender.domain.post.dto.PostAllResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Hashtag;
 import discordstudy.calender.domain.post.entity.HashtagMap;
@@ -16,7 +15,6 @@ import discordstudy.calender.global.dto.util.PageConverter;
 import discordstudy.calender.global.exception.ApplicationException;
 import discordstudy.calender.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,8 +103,15 @@ public class PostService {
         post.getHashtagMaps().clear();
         post.getHashtagMaps().addAll(hashtagMaps);
 
-        hashtagMaps.forEach(hm->hm.setPost(post));
+        hashtagMaps.forEach(hm -> hm.setPost(post));
 
         return post;
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse postFindAll(Pageable pageRequest) {
+        return PageConverter.toDto(
+                postRepository.findAll(pageRequest).map(PostConverter::toDto)
+        );
     }
 }

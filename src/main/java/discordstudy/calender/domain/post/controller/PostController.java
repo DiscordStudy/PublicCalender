@@ -1,10 +1,15 @@
 package discordstudy.calender.domain.post.controller;
 
+import discordstudy.calender.domain.post.dto.PostAllResponse;
 import discordstudy.calender.domain.post.dto.PostCreateResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.service.PostService;
 import discordstudy.calender.global.dto.ApiResponse;
+import discordstudy.calender.global.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,5 +59,14 @@ public class PostController {
         postService.postDelete(postId, userDetails.getUsername());
 
         return ApiResponse.ok();
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<PostAllResponse>>> postFindAll(
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageRequest
+    ) {
+        return ApiResponse.ok(
+                postService.postFindAll(pageRequest)
+        );
     }
 }
