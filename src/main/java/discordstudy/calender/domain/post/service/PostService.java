@@ -2,6 +2,7 @@ package discordstudy.calender.domain.post.service;
 
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
+import discordstudy.calender.domain.post.dto.PostDetailResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Hashtag;
 import discordstudy.calender.domain.post.entity.HashtagMap;
@@ -111,7 +112,15 @@ public class PostService {
     @Transactional(readOnly = true)
     public PageResponse postAll(Pageable pageRequest) {
         return PageConverter.toDto(
-                postRepository.findAll(pageRequest).map(PostConverter::toDto)
+                postRepository.findAll(pageRequest).map(PostConverter::toAllDto)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailResponse postDetail(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND));
+
+        return PostConverter.toDetailDto(post);
     }
 }

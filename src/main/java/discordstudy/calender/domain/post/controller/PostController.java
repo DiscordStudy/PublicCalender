@@ -70,4 +70,11 @@ public class PostController {
                 postService.postAll(pageRequest)
         );
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResponse<PostDetailResponse>> postDetail(@PathVariable Long postId){
+        return ApiResponse.ok(
+                postService.postDetail(postId)
+        );
+    }
 }
