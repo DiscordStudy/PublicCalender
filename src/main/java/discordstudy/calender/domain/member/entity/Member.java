@@ -1,5 +1,6 @@
 package discordstudy.calender.domain.member.entity;
 
+import discordstudy.calender.domain.team.entity.Team;
 import discordstudy.calender.domain.team.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,8 @@ public class Member {
         this.nickname = nickname;
         this.password = password;
         this.role=role;
+    }
+    public void addTeam(Team team) {
+        team.setMember(this);
     }
 }
