@@ -21,7 +21,7 @@ public class PostConverter {
     }
 
     public static PostAllResponse toDto(Post post) {
-        return new PostAllResponse(post.getId(), post.getTitle(), post.getTitle(),
+        return new PostAllResponse(post.getId(), post.getTitle(),
                 post.getHashtagMaps().stream()
                 .map(v -> v.getHashtag().getTag())
                         .collect(Collectors.toSet())
