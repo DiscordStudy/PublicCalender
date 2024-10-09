@@ -109,7 +109,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse postFindAll(Pageable pageRequest) {
+    public PageResponse postAll(Pageable pageRequest) {
         return PageConverter.toDto(
                 postRepository.findAll(pageRequest).map(PostConverter::toDto)
         );

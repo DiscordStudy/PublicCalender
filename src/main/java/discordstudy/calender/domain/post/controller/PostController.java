@@ -2,6 +2,7 @@ package discordstudy.calender.domain.post.controller;
 
 import discordstudy.calender.domain.post.dto.PostAllResponse;
 import discordstudy.calender.domain.post.dto.PostCreateResponse;
+import discordstudy.calender.domain.post.dto.PostDetailResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.service.PostService;
 import discordstudy.calender.global.dto.ApiResponse;
@@ -62,11 +63,11 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<PostAllResponse>>> postFindAll(
+    public ResponseEntity<ApiResponse<PageResponse<PostAllResponse>>> postAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageRequest
     ) {
         return ApiResponse.ok(
-                postService.postFindAll(pageRequest)
+                postService.postAll(pageRequest)
         );
     }
 }
