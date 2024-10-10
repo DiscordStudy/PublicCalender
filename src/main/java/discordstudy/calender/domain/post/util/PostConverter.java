@@ -1,11 +1,14 @@
 package discordstudy.calender.domain.post.util;
 
 import discordstudy.calender.domain.member.entity.Member;
+import discordstudy.calender.domain.post.dto.PostAllResponse;
+import discordstudy.calender.domain.post.dto.PostDetailResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.HashtagMap;
 import discordstudy.calender.domain.post.entity.Post;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PostConverter {
 
@@ -16,5 +19,21 @@ public class PostConverter {
                 .hashtagMaps(hashtagMaps)
                 .member(member)
                 .build();
+    }
+
+    public static PostAllResponse toAllDto(Post post) {
+        return new PostAllResponse(post.getId(), post.getTitle(),
+                post.getHashtagMaps().stream()
+                        .map(v -> v.getHashtag().getTag())
+                        .collect(Collectors.toSet())
+        );
+    }
+
+    public static PostDetailResponse toDetailDto(Post post) {
+        return new PostDetailResponse(post.getTitle(), post.getContent(),
+                post.getHashtagMaps().stream()
+                        .map(v -> v.getHashtag().getTag())
+                        .collect(Collectors.toSet())
+        );
     }
 }

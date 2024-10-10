@@ -1,6 +1,6 @@
 package discordstudy.calender.domain.post.dto;
 
-public record PostResponse(
+public record PostCreateResponse(
         Long postId
 ) {
 }

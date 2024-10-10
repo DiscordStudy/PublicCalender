@@ -26,7 +26,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/members/*").permitAll()//
+                        .requestMatchers("/", "/members/*").permitAll()
+                        .requestMatchers("/posts","/posts/*").permitAll()
                         .anyRequest().authenticated()//그외의 모든 요청은 인증요구
                 )
                 .logout(LogoutConfigurer::permitAll) // 로그아웃 접근도 모두 허용
