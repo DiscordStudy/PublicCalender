@@ -3,6 +3,7 @@ package discordstudy.calender.domain.post.service;
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
 import discordstudy.calender.domain.post.dto.PostAllResponse;
+import discordstudy.calender.domain.post.dto.PostDetailResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Post;
 import discordstudy.calender.domain.post.repository.HashtagRepository;
@@ -302,14 +303,14 @@ class PostServiceTest {
 
     @Nested
     @DisplayName("postAll() 메소드는")
-    class PostAllTest{
+    class PostAllTest {
         @DisplayName("성공한다")
         @Test
         void successTest() {
             //Given
             PageRequest pageRequest = PageRequest.of(0, 20);
             given(postRepository.findAll(any(Pageable.class)))
-                    .willReturn(new PageImpl<>(List.of(post),pageRequest,1));
+                    .willReturn(new PageImpl<>(List.of(post), pageRequest, 1));
 
             //When
             PageResponse<PostAllResponse> result = postService.postAll(pageRequest);
@@ -317,6 +318,38 @@ class PostServiceTest {
             //Then
             assertThat(result.pageSize()).isEqualTo(20);
             assertThat(result.articles().get(0).postId()).isEqualTo(1L);
+        }
+    }
+
+    @Nested
+    @DisplayName("postDetail() 메소드는")
+    class PostDetailTest {
+        @DisplayName("성공한다")
+        @Test
+        void successTest() {
+            //Given
+            given(postRepository.findById(anyLong()))
+                    .willReturn(Optional.of(post));
+            //When
+            PostDetailResponse result = postService.postDetail(1L);
+
+            //Then
+            assertThat(result.title()).isEqualTo(post.getTitle());
+        }
+
+        @DisplayName("id를 찾지못해 실패한다")
+        @Test
+        void failWithNotExistIdTest() {
+            //Given
+            given(postRepository.findById(anyLong()))
+                    .willReturn(Optional.empty());
+
+            //When
+            ApplicationException result = assertThrows(ApplicationException.class,
+                    () -> postService.postDetail(1L));
+
+            //Then
+            assertThat(result.getErrorCode()).isEqualTo(NOT_FOUND);
         }
     }
 
