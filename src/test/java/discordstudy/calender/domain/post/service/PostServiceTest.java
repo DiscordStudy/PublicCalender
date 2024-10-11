@@ -2,12 +2,14 @@ package discordstudy.calender.domain.post.service;
 
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
+import discordstudy.calender.domain.member.util.MemberFixture;
 import discordstudy.calender.domain.post.dto.PostAllResponse;
 import discordstudy.calender.domain.post.dto.PostDetailResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Post;
 import discordstudy.calender.domain.post.repository.HashtagRepository;
 import discordstudy.calender.domain.post.repository.PostRepository;
+import discordstudy.calender.domain.post.util.PostFixture;
 import discordstudy.calender.domain.team.enums.Role;
 import discordstudy.calender.global.dto.PageResponse;
 import discordstudy.calender.global.exception.ApplicationException;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -46,21 +47,9 @@ class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
-    private Member authorMember = new Member(
-            1L,
-            "loginId",
-            "홍길동",
-            "길동",
-            Role.MEMBER
-    );
+    private Member authorMember = MemberFixture.member;
 
-    private Member admin = new Member(
-            2L,
-            "adminId",
-            "어드민",
-            "password",
-            Role.ADMIN
-    );
+    private Member admin = MemberFixture.admin;
 
     private Member otherMember = new Member(
             2L,
@@ -76,13 +65,7 @@ class PostServiceTest {
             Set.of("해시택")
     );
 
-    private Post post = new Post(
-            1L,
-            "게시글",
-            "내용",
-            authorMember,
-            new HashSet<>()
-    );
+    private Post post = PostFixture.post;
 
     @BeforeEach
     public void init() {
