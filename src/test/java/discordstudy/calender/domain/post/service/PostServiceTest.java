@@ -2,11 +2,13 @@ package discordstudy.calender.domain.post.service;
 
 import discordstudy.calender.domain.member.entity.Member;
 import discordstudy.calender.domain.member.repository.MemberRepository;
+import discordstudy.calender.domain.post.dto.PostAllResponse;
 import discordstudy.calender.domain.post.dto.PostRequest;
 import discordstudy.calender.domain.post.entity.Post;
 import discordstudy.calender.domain.post.repository.HashtagRepository;
 import discordstudy.calender.domain.post.repository.PostRepository;
 import discordstudy.calender.domain.team.enums.Role;
+import discordstudy.calender.global.dto.PageResponse;
 import discordstudy.calender.global.exception.ApplicationException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +16,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static discordstudy.calender.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -292,6 +297,26 @@ class PostServiceTest {
                     () -> postService.postUpdate(editedRequest, post.getId(), otherMember.getLoginId()));
 
             assertThat(result.getErrorCode()).isEqualTo(UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    @Nested
+    @DisplayName("postAll() 메소드는")
+    class PostAllTest{
+        @DisplayName("성공한다")
+        @Test
+        void successTest() {
+            //Given
+            PageRequest pageRequest = PageRequest.of(0, 20);
+            given(postRepository.findAll(any(Pageable.class)))
+                    .willReturn(new PageImpl<>(List.of(post),pageRequest,1));
+
+            //When
+            PageResponse<PostAllResponse> result = postService.postAll(pageRequest);
+
+            //Then
+            assertThat(result.pageSize()).isEqualTo(20);
+            assertThat(result.articles().get(0).postId()).isEqualTo(1L);
         }
     }
 
