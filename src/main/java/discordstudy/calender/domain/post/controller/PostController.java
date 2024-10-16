@@ -28,11 +28,9 @@ public class PostController {
             @RequestBody PostRequest request,
             Authentication authentication
     ) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
         return ApiResponse.ok(
                 new PostCreateResponse(
-                        postService.postPost(request, userDetails.getUsername())
+                        postService.postPost(request, authentication.getName())
                 )
         );
     }
@@ -43,9 +41,7 @@ public class PostController {
             @PathVariable Long postId,
             Authentication authentication
     ) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        postService.postUpdate(request, postId, userDetails.getUsername());
+        postService.postUpdate(request, postId, authentication.getName());
 
         return ApiResponse.ok();
     }
@@ -55,9 +51,7 @@ public class PostController {
             @PathVariable Long postId,
             Authentication authentication
     ) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        postService.postDelete(postId, userDetails.getUsername());
+        postService.postDelete(postId, authentication.getName());
 
         return ApiResponse.ok();
     }
